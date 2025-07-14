@@ -1,0 +1,40 @@
+# Archivos de código y texto
+*.cs text diff=csharp
+*.shader text
+*.cginc text
+*.hlsl text
+*.txt text
+*.json text
+*.xml text
+*.yaml text
+*.yml text
+*.asmdef text
+*.log text
+*.md text
+*.gitignore text
+*.gitattributes text
+
+# Archivos binarios Unity (no tocar saltos de línea)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.tga binary
+*.gif binary
+*.psd binary
+*.fbx binary
+*.prefab binary
+*.unity binary
+*.asset binary
+*.controller binary
+*.meta binary
+*.wav binary
+*.mp3 binary
+*.ogg binary
+*.mp4 binary
+*.ttf binary
+*.otf binary
+*.dll binary
+*.exe binary
+*.so binary
+*.a binary
+*.lib binary
