@@ -20,4 +20,6 @@ MonoBehaviour:
   c_Formacion: "Formaci\xF3n moderada"
   c_Puesto: "Docente en escuela de ni\xF1os con dificultades de aprendizaje"
   c_TipoProfesion: Cuidado
+  c_RespuestaPregunta1: Respuesta 1
+  c_RespuestaPregunta2: Respuesta 2
   c_Confianza: 0

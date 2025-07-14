@@ -12,6 +12,8 @@ public class CaseData : ScriptableObject
     [SerializeField] private string c_Formacion;
     [SerializeField] private string c_Puesto;
     [SerializeField] private string c_TipoProfesion;
+    [SerializeField] private string c_RespuestaPregunta1;
+    [SerializeField] private string c_RespuestaPregunta2;
 
     [Range(1, 10)]
     [SerializeField] private int c_Confianza;
@@ -24,6 +26,8 @@ public class CaseData : ScriptableObject
     public string C_Experiencia { get { return c_Experiencia; } }
     public int C_Confianza { get; set; }
     public string C_TipoProfesion { get { return c_TipoProfesion; } }
+    public string C_RespuestaPregunta1 { get { return c_RespuestaPregunta1; } }
+    public string C_RespuestaPregunta2 { get { return c_RespuestaPregunta2; } }
 }
 
 
