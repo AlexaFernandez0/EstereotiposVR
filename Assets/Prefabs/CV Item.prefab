@@ -48,6 +48,7 @@ GameObject:
   - component: {fileID: 6113333175859565278}
   - component: {fileID: 2431015987144299121}
   - component: {fileID: 3237680424633260578}
+  - component: {fileID: 847053904017216284}
   m_Layer: 0
   m_Name: CV Item
   m_TagString: CV
@@ -457,3 +458,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CVData: {fileID: 11400000, guid: 1c1d1452c85b0be4897719f52a0c6069, type: 2}
+--- !u!114 &847053904017216284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7053358546203410555}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 0.020754695, g: 0.30343816, b: 1, a: 1}
+  outlineWidth: 5.48
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
+  NPCOutline: 0

@@ -19,33 +19,23 @@ public class UIController : MonoBehaviour
         HandleOutline(rightHandRay, ref lastRightOutlined);
     }
 
+
     void HandleOutline(XRRayInteractor rayInteractor, ref GameObject lastOutlined)
     {
         if (rayInteractor.interactablesHovered.Count > 0)
         {
-            var interactable = rayInteractor.interactablesHovered[0];
-            var outline = interactable.transform.GetComponent<Outline>();
-            var npc = interactable.transform.GetComponent<NPC>();
+            var interactable = rayInteractor.interactablesHovered[0] as MonoBehaviour;
+            var outline = interactable.GetComponent<Outline>();
+            var npc = interactable.GetComponent<NPC>();
 
             if (outline != null)
             {
-                bool puedeResaltar = true;
-
-                // Si es un NPC, solo permite resaltar si está listo para preguntas
-                if (npc != null)
-                {
-                    puedeResaltar = npc.currentState == NPC.NPCState.ReadyForQuestions;
-                }
+                bool puedeResaltar = npc != null && npc.currentState == NPC.NPCState.ReadyForQuestions;
+                outline.enabled = puedeResaltar;
 
                 if (puedeResaltar)
                 {
-                    if (lastOutlined != null && lastOutlined != interactable.transform.gameObject)
-                    {
-                        lastOutlined.GetComponent<Outline>().enabled = false;
-                    }
-
-                    outline.enabled = true;
-                    lastOutlined = interactable.transform.gameObject;
+                    lastOutlined = interactable.gameObject;
                     return;
                 }
             }

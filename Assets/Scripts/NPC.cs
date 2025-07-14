@@ -20,6 +20,9 @@ public class NPC : MonoBehaviour
     private bool isSitting = false;
     public NPCState currentState = NPCState.Idle;
 
+    [SerializeField] private GameObject preguntasPanel;
+    [SerializeField] private Animator preguntasAnimator;
+    private bool preguntasMostradas = false;
     public enum NPCState
     {
         Idle,
@@ -102,6 +105,23 @@ public class NPC : MonoBehaviour
         Vector3 lookPosition = jugador.position;
         lookPosition.y = transform.position.y;
         transform.LookAt(lookPosition);
+    }
+    public void OnClickNPC() // Llamas este método cuando haces click en tu NPC
+    {
+        
+            if (preguntasMostradas) return;
+            preguntasMostradas = true;
+
+            preguntasPanel.SetActive(true);
+            StartCoroutine(MostrarPreguntas());
+        
+        
+    }
+
+    IEnumerator MostrarPreguntas()
+    {
+        preguntasAnimator.SetTrigger("Appear");
+        yield return new WaitForSeconds(0.5f);
     }
 
     
