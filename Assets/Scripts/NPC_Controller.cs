@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class NPC_Controller : MonoBehaviour
 {
@@ -8,6 +10,8 @@ public class NPC_Controller : MonoBehaviour
     public NPC npcFemenino;
     public NPC currentNPC;
     public Transform CVSpawnPoint;
+    public Transform NPCExitPoint;
+
     [SerializeField] public Transform npcSpawnPointMujer;
     [SerializeField] public Transform npcSpawnPointHombre;
 
@@ -24,6 +28,7 @@ public class NPC_Controller : MonoBehaviour
     }
     public void SpawnNPC(CaseData caso)
     {
+        DestroyNPC(); // Destruye el NPC actual si existe
         bool usarMasculino = caso.C_Sexo == "Hombre";
         NPC npc = Instantiate(usarMasculino ? npcMasculino : npcFemenino);
         npc.SetCV(caso);
@@ -55,8 +60,8 @@ public class NPC_Controller : MonoBehaviour
     public void TerminarPreguntasNPC()
     {
         currentNPC.TogglePreguntas();
+        currentNPC.StartPoint = NPCExitPoint;
         currentNPC.EntregarCV();
-        //DestroyNPC();
     }
 
 }

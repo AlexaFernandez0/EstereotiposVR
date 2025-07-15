@@ -159,10 +159,8 @@ public class GameController : MonoBehaviour
             playerIsSitting = false;
             TermineDeEvaluar = false;
             casosCompletados++;
+            TerminarEvaluacionActual();
         }
-
-        // Aquí podrías reiniciar el NPC o cargar uno nuevo
-        npcController.DestroyNPC();
     }
 
     void FinalizarEvaluacion()
@@ -172,13 +170,13 @@ public class GameController : MonoBehaviour
         TerminarJuego();
     }
 
-    void TerminarEvaluacionActual()
+    public void TerminarEvaluacionActual()
     {
-        npcController.TerminarPreguntasNPC();
+        //npcController.TerminarPreguntasNPC();
         SiguienteCaso();
     }
 
-    void SiguienteCaso()
+    public void SiguienteCaso()
     {
         CaseData casoSeleccionado = casosRestantes[0]; // O usa Random si prefieres aleatorio
         casosRestantes.Remove(casoSeleccionado);

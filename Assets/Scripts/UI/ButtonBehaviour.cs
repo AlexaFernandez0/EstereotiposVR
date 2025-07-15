@@ -9,6 +9,7 @@ public class ButtonBehavior : MonoBehaviour
 {
     [SerializeField] SliderController slideInfo;
     [SerializeField] UI_CasoInfo uI_CasoInfo;
+    [SerializeField] GameController gameController;
 
     // Start is called before the first frame update
     void Start()
@@ -44,6 +45,11 @@ public class ButtonBehavior : MonoBehaviour
             Inventario.Instance.ActualCase = Inventario.Instance.cvItems.Count - 1;
         }
         uI_CasoInfo.UpdateUI(Inventario.Instance.cvItems[Inventario.Instance.ActualCase]);
+    }
+
+    public void CloseButton()
+    {
+        gameController.ContinuarRondas();
     }
    
 }

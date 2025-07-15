@@ -13,6 +13,7 @@ TagManager:
   - Hat
   - SitPointMujer
   - SitPointHombre
+  - CanvasNPC
   layers:
   - Default
   - TransparentFX

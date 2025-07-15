@@ -13,7 +13,7 @@ public class NPC : MonoBehaviour
     private NavMeshAgent agente;
 
     [SerializeField] public Transform SitPoint;
-    [SerializeField] Transform StartPoint;
+    [SerializeField] public Transform StartPoint;
     [SerializeField] Animator animNPC;
     [SerializeField] private Transform jugador;
 
@@ -23,7 +23,7 @@ public class NPC : MonoBehaviour
     public NPCState currentState = NPCState.Idle;
 
     [SerializeField] private GameObject preguntasPanel;
-    [SerializeField] private Transform CanvasTransform;
+    //[SerializeField] private Transform CanvasTransform;
     [SerializeField] private Animator preguntasAnimator;
     private bool preguntasMostradas = false;
     public bool TerminePreguntas = false;
@@ -69,6 +69,7 @@ public class NPC : MonoBehaviour
 
     public void EntregarCV()
     {
+        Debug.Log("Entregando CV: " + miCV.C_Nombre);
         GameObject hoja = Instantiate(prefabHojaCV, puntoEntrega.position, puntoEntrega.rotation);
         hoja.GetComponent<CVItem>().CVData = this.miCV;
         hoja.transform.SetParent(null); // Desanclar del mundo
@@ -78,6 +79,7 @@ public class NPC : MonoBehaviour
 
     IEnumerator EntregaCV()
     {
+        Debug.Log("Ya dejé el CV en el punto de entrega");
         //Posible animación de dar CV
         yield return new WaitForSeconds(0.5f);
         LevantarNPC();
@@ -87,7 +89,6 @@ public class NPC : MonoBehaviour
 
     public void IniciarMovimiento(Transform destino)
     {
-            agente.enabled = true;
             agente.isStopped = false;
             agente.updatePosition = true;
             agente.updateRotation = true;
@@ -114,7 +115,6 @@ public class NPC : MonoBehaviour
         agente.isStopped = true;
         agente.updatePosition = false;
         agente.updateRotation = false;
-        agente.enabled = false;
         currentState = NPCState.Sitting;
 
         animNPC.SetBool("IsWalking", false);
@@ -150,6 +150,7 @@ public class NPC : MonoBehaviour
     }
     public void OnClickNPC() // Llamas este método cuando haces click en tu NPC
     {
+        Debug.Log("NPC Clicked: " + gameObject.name);
         if (currentState == NPCState.ReadyForQuestions)
         {
             TogglePreguntas();
@@ -158,13 +159,15 @@ public class NPC : MonoBehaviour
 
     IEnumerator MostrarPreguntas()
     {
+        Debug.Log("Mostrando preguntas");
         preguntasPanel.SetActive(true);
         yield return new WaitForSeconds(0.5f);
-        preguntasAnimator.SetTrigger("Open");
+        //preguntasAnimator.SetTrigger("Open");
     }
     IEnumerator OcultarPreguntas()
     {
-        preguntasAnimator.SetTrigger("Close");
+        //preguntasAnimator.SetTrigger("Close");
+        Debug.Log("Ocultando preguntas");
         yield return new WaitForSeconds(0.5f);
         preguntasPanel.SetActive(false);
     }
@@ -187,26 +190,28 @@ public class NPC : MonoBehaviour
     {
         if (currentState == NPCState.ReadyForQuestions)
         {
-            TogglePreguntas();
             //Agrega interfaz de diálogo aquí
             if (pregunta == 1)
             {
+                currentState = NPCState.Talking;
                 StartCoroutine(EsperarYHablar(miCV.C_RespuestaPregunta1));
             }
             if (pregunta == 2)
             {
+                currentState = NPCState.Talking;
                 StartCoroutine(EsperarYHablar(miCV.C_RespuestaPregunta2));
             }
             if (pregunta == 3)
             {
+                currentState = NPCState.Talking;
                 TerminePreguntas = true;
             }
-            currentState = NPCState.Talking;
         }
     }
 
     IEnumerator EsperarYHablar(String respuesta)
     {
+        TogglePreguntas();
         animNPC.SetTrigger("Talk");
         Debug.Log("Diálogo:" + respuesta);
         yield return new WaitForSeconds(0.5f);
