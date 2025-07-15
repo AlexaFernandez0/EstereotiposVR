@@ -11,12 +11,14 @@ public class UI_CasoInfo : MonoBehaviour
     [SerializeField] TextMeshProUGUI Profesion;
     [SerializeField] TextMeshProUGUI Genero;
     [SerializeField] TextMeshProUGUI Puesto;
-    [SerializeField] int confianza;
+    [SerializeField] public int confianza = 1;
     [SerializeField] SliderController sliderController;
     // Start is called before the first frame update
     void Start()
     {
-
+        // Inicializar los valores de confianza
+        confianza = 1; // Valor inicial
+        sliderController.currentConfianza = confianza; // Sincronizar con el slider
     }
 
     // Update is called once per frame
@@ -32,8 +34,9 @@ public class UI_CasoInfo : MonoBehaviour
         Profesion.text = caseData.C_Profesion;
         Genero.text = caseData.C_Sexo;
         Puesto.text = caseData.C_Puesto;
-        sliderController.slider.value = caseData.C_Confianza;
-        sliderController.sliderUI.value = caseData.C_Confianza;
+        confianza = caseData.C_Confianza;
+        sliderController.currentConfianza = confianza; // Actualizar el slider con el valor de confianza
+        Debug.Log("Curriculum de" + caseData.C_Nombre + " actualizado en UI con confianza: " + confianza);
     }
 
     

@@ -15,21 +15,17 @@ public class GameController : MonoBehaviour
     [SerializeField] public bool playerHasHat = false;
     [SerializeField] public bool playerIsSitting = false;
     [SerializeField] bool TermineDeEvaluar = false;
-    public GameObject telefonoInput;
     [SerializeField] bool playerHasPhone = false;
+
+    //Audio Sources
+    [SerializeField] AudioSource audioSourcePhone;
+    [SerializeField] AudioSource audioSourcePhoneInstructions;
+
+    // Lista de casos y control de rondas
     public List<CaseData> todosLosCasos; // Llena en el inspector
     private List<CaseData> casosRestantes;
     private int casosCompletados = 0;
     public ResultadosManager resultadosManager;
-
-    //Colliders y controladores de las manos
-    public GameObject leftHandCollider;
-    public GameObject rightHandCollider;
-    public GameObject leftHandController;
-    public GameObject rightHandController;
-
-    [SerializeField] Vector3 positionOffsetRight;
-    [SerializeField] Vector3 positionOffsetLeft;
 
     public enum GameState
     {
@@ -55,29 +51,14 @@ public class GameController : MonoBehaviour
             Destroy(gameObject);
         }
 
-        leftHandCollider = GameObject.FindGameObjectWithTag("LeftHand");
-        rightHandCollider = GameObject.FindGameObjectWithTag("RightHand");
-        rightHandController = GameObject.FindGameObjectWithTag("RightHandTarget");
-        leftHandController = GameObject.FindGameObjectWithTag("LeftHandTarget");
         npcController = GetComponent<NPC_Controller>();
     }
 
     void Start()
     {
-        // Verificar que los objetos de mano y controladores están asignados correctamente
-        if (leftHandCollider == null || rightHandCollider == null)
-        {
-            Debug.LogError("No encuentro los colliders de las manos");
-        }
-        if (leftHandController == null || rightHandController == null)
-        {
-            Debug.Log("No encuentro los controladores de las manos");
-        }
-
         // Inicializar el ResultadosManager
         resultadosManager = FindObjectOfType<ResultadosManager>();
         casosRestantes = new List<CaseData>(todosLosCasos);
-        SiguienteCaso();
 
         if (resultadosManager != null)
         {
@@ -105,7 +86,7 @@ public class GameController : MonoBehaviour
                 if (playerIsSitting) IniciarRondaNPC();
                 break;
             case GameState.Preguntas:
-                if (npcController.GetComponent<NPC>().TerminePreguntas) IrAEvaluarCV();
+                if (npcController.GetComponent<NPC_Controller>().currentNPC.GetComponent<NPC>().TerminePreguntas) IrAEvaluarCV();
                 break;
             case GameState.EvaluacionCV:
                 if (TermineDeEvaluar) ContinuarRondas();
@@ -126,9 +107,6 @@ public class GameController : MonoBehaviour
     void LateUpdate()
     {
 
-        // Actualizar las posiciones de los colliders de las manos
-        leftHandCollider.transform.position = leftHandController.transform.position + leftHandController.transform.TransformDirection(positionOffsetLeft);
-        rightHandCollider.transform.position = rightHandController.transform.position + rightHandController.transform.TransformDirection(positionOffsetRight);
     }
 
     public void MostrarInstrucciones()
@@ -140,9 +118,9 @@ public class GameController : MonoBehaviour
 
     public void IrAFaseTelefono()
     {
+        audioSourcePhone.Play();
         Debug.Log("Cambiando a la fase de teléfono.");
         currentState = GameState.Telefono;
-
     }
 
     public void IrAFaseSentarse()
@@ -155,8 +133,9 @@ public class GameController : MonoBehaviour
     public void IniciarRondaNPC()
     {
         Debug.Log("Iniciando ronda con NPC.");
-        //currentState = GameState.Preguntas;
-
+        SiguienteCaso();
+        npcController.IniciarMovimientoNPC();
+        currentState = GameState.Preguntas;
     }
 
     public void IrAEvaluarCV()
@@ -213,8 +192,23 @@ public class GameController : MonoBehaviour
     }
     public void YaTengoTelefono()
     {
-        playerHasPhone = true;
+        StartCoroutine(ObtencionTelefono());
         Debug.Log("El jugador tiene el telefono: " + playerHasPhone);
+    }
+    IEnumerator ObtencionTelefono()
+    {
+        audioSourcePhone.Stop();
+        audioSourcePhoneInstructions.Play();
+        yield return new WaitForSeconds(5f);
+        audioSourcePhoneInstructions.Stop();
+        playerHasPhone = true;
+
+    }
+
+    public void YaMeSenté()
+    {
+        playerIsSitting = true;
+        Debug.Log("El jugador se ha sentado: " + playerIsSitting);
     }
 
 }

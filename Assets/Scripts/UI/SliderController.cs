@@ -3,45 +3,63 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
-using UnityEngine.XR.Content.Interaction;
-using UnityEngine.XR.Interaction.Toolkit;
 
 public class SliderController : MonoBehaviour
 {
-    public XRSlider slider; //Slider físico
-    public UnityEngine.UI.Slider sliderUI; //Slider dentro de la UI
-    [SerializeField] Transform handle;
-    [SerializeField] Vector3 minLimite; // valores locales
-    [SerializeField] Vector3 maxLimite;
-
+    //public XRSlider slider; //Slider físico
+    //public UnityEngine.UI.Slider sliderUI; //Slider dentro de la UI
+    //[SerializeField] Transform handle;
+    [SerializeField] int minLimite;
+    [SerializeField] int maxLimite;
+    [SerializeField] Sprite FillAmount;
+    [SerializeField] public int currentConfianza = 1;
+    [SerializeField] List<GameObject> fillImage;
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
-    public void SincronizarSlider(float value)
+    void Update()
     {
-        if (sliderUI != null)
+        for (int i = 0; i < fillImage.Count; i++)
         {
-            sliderUI.value = Mathf.Lerp(sliderUI.minValue, sliderUI.maxValue, value);
+            if (i < currentConfianza)
+            {
+                fillImage[i].SetActive(true);
+            }
+            else
+            {
+                fillImage[i].SetActive(false);
+            }
         }
     }
 
+    public void MoreButtton()
+    {
+        currentConfianza++;
+        if (currentConfianza > maxLimite)
+        {
+            currentConfianza = maxLimite;
+        }
+    }
+    
+    public void LessButton()
+    {
+        currentConfianza--;
+        if (currentConfianza < minLimite)
+        {
+            currentConfianza = minLimite;
+        }
+    }
     public void GuardarValoracion(CVItem cv)
     {
-        if (cv != null && sliderUI != null)
+        if (cv != null)
         {
-            cv.CVData.C_Confianza = Mathf.RoundToInt(sliderUI.value);
+            cv.CVData.C_Confianza = currentConfianza;
             Debug.Log($"Valor guardado en {cv.CVData.name}: {cv.CVData.C_Confianza}");
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        SincronizarSlider(slider.value);
-    }
 
 }

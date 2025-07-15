@@ -25,7 +25,7 @@ public class UIController : MonoBehaviour
         if (rayInteractor.interactablesHovered.Count > 0)
         {
             var interactable = rayInteractor.interactablesHovered[0] as MonoBehaviour;
-            Debug.Log("Detectando: " + interactable.gameObject.name);
+            //Debug.Log("Detectando: " + interactable.gameObject.name);
             var outline = interactable.GetComponent<Outline>();
             var npc = interactable.GetComponent<NPC>();
 

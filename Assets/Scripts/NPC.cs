@@ -12,7 +12,7 @@ public class NPC : MonoBehaviour
     public Transform puntoEntrega;
     private NavMeshAgent agente;
 
-    [SerializeField] Transform SitPoint;
+    [SerializeField] public Transform SitPoint;
     [SerializeField] Transform StartPoint;
     [SerializeField] Animator animNPC;
     [SerializeField] private Transform jugador;
@@ -41,6 +41,8 @@ public class NPC : MonoBehaviour
     {
         agente = GetComponent<NavMeshAgent>();
         agente.Warp(StartPoint.position);
+
+        jugador = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     void Update()
@@ -49,7 +51,7 @@ public class NPC : MonoBehaviour
         {
             IniciarMovimiento(SitPoint);
         }
-        if (TerminePreguntas && currentState == NPCState.Talking)
+        if (TerminePreguntas && currentState == NPCState.ReadyForQuestions)
         {
             LevantarNPC();
         }
@@ -85,21 +87,26 @@ public class NPC : MonoBehaviour
 
     public void IniciarMovimiento(Transform destino)
     {
-        isWalking = true;
-        agente.isStopped = false;
-        agente.updatePosition = true;
-        agente.updateRotation = true;
-        agente.SetDestination(destino.position);
-        animNPC.SetBool("IsWalking", true);
-        currentState = NPCState.Walking;
+            agente.enabled = true;
+            agente.isStopped = false;
+            agente.updatePosition = true;
+            agente.updateRotation = true;
+            isWalking = true;
+            agente.SetDestination(destino.position);
+            currentState = NPCState.Walking;
+
+            animNPC.SetBool("IsWalking", true);
     }
 
     private void LlegarAlDestino()
     {
         isWalking = false;
         StartWalking = false;
-        MirarAlJugador();
-        SentarNPC();
+        if (TerminePreguntas == false)
+        {
+           MirarAlJugador();
+           SentarNPC(); 
+        }
     }
 
     void SentarNPC()
@@ -116,7 +123,7 @@ public class NPC : MonoBehaviour
 
     public void LevantarNPC()
     {
-        Levantarse();
+        StartCoroutine(Levantarse());
 
     }
 
@@ -132,7 +139,7 @@ public class NPC : MonoBehaviour
     IEnumerator Levantarse()
     {
         animNPC.SetTrigger("Levantarse");
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
         IniciarMovimiento(StartPoint);
     }
     private void MirarAlJugador()
@@ -180,7 +187,6 @@ public class NPC : MonoBehaviour
     {
         if (currentState == NPCState.ReadyForQuestions)
         {
-            currentState = NPCState.Talking;
             TogglePreguntas();
             //Agrega interfaz de diálogo aquí
             if (pregunta == 1)
@@ -195,17 +201,16 @@ public class NPC : MonoBehaviour
             {
                 TerminePreguntas = true;
             }
+            currentState = NPCState.Talking;
         }
     }
 
     IEnumerator EsperarYHablar(String respuesta)
     {
-        yield return new WaitForSeconds(0.5f);
         animNPC.SetTrigger("Talk");
         Debug.Log("Diálogo:" + respuesta);
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
         currentState = NPCState.ReadyForQuestions;
-
     }
 
 

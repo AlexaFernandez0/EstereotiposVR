@@ -7,12 +7,16 @@ public class NPC_Controller : MonoBehaviour
     public NPC npcMasculino;
     public NPC npcFemenino;
     public NPC currentNPC;
+    public Transform CVSpawnPoint;
+    [SerializeField] public Transform npcSpawnPointMujer;
+    [SerializeField] public Transform npcSpawnPointHombre;
+
 
     void Update()
     {
-        if(currentNPC != null && currentNPC.currentState == NPC.NPCState.Talking)
+        if (currentNPC != null && currentNPC.currentState == NPC.NPCState.Talking)
         {
-            if(currentNPC.TerminePreguntas)
+            if (currentNPC.TerminePreguntas)
             {
                 TerminarPreguntasNPC();
             }
@@ -23,7 +27,16 @@ public class NPC_Controller : MonoBehaviour
         bool usarMasculino = caso.C_Sexo == "Hombre";
         NPC npc = Instantiate(usarMasculino ? npcMasculino : npcFemenino);
         npc.SetCV(caso);
+        npc.puntoEntrega = CVSpawnPoint;
         currentNPC = npc;
+        if (usarMasculino)
+        {
+            npc.SitPoint = npcSpawnPointHombre;
+        }
+        else
+        {
+            npc.SitPoint = npcSpawnPointMujer;
+        }
     }
     public void DestroyNPC()
     {
@@ -43,7 +56,7 @@ public class NPC_Controller : MonoBehaviour
     {
         currentNPC.TogglePreguntas();
         currentNPC.EntregarCV();
-        DestroyNPC();
+        //DestroyNPC();
     }
 
 }

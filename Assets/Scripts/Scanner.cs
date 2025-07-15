@@ -29,6 +29,10 @@ public class Scanner : MonoBehaviour
                 Inventario.Instance.AddCVItem(cv);
                 UICaseInfo.UpdateUI(cv);
             }
+            else
+            { 
+                Debug.LogWarning("CVItem component not found on the object: " + other.name);
+            }
         }
     }
     
