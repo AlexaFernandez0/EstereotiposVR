@@ -26,6 +26,31 @@ public class ButtonBehavior : MonoBehaviour
     {
         slideInfo.GuardarValoracion(Inventario.Instance.cvItems[Inventario.Instance.ActualCase]);
     }
+    public void SaveExperience()
+    {
+        gameController.FinalizarEvaluacion();
+    }
+    public void ExitExperience()
+    {
+        StartCoroutine(GameExit());
+        Debug.Log("Saliendo del juego...");
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+        #else
+            Application.Quit();
+        #endif
+    }
+    IEnumerator GameExit()
+    {
+        gameController.FinalizarEvaluacion();
+        gameController.currentState = GameController.GameState.Finalizado;
+        yield return new WaitForSeconds(0.5f);
+
+    }
+    public void ReanudarButton()
+    {
+        gameController.ReanudarJuego();
+    }
 
     public void NextRightButton()
     {

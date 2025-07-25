@@ -89,14 +89,14 @@ public class NPC : MonoBehaviour
 
     public void IniciarMovimiento(Transform destino)
     {
-            agente.isStopped = false;
-            agente.updatePosition = true;
-            agente.updateRotation = true;
-            isWalking = true;
-            agente.SetDestination(destino.position);
-            currentState = NPCState.Walking;
+        agente.isStopped = false;
+        agente.updatePosition = true;
+        agente.updateRotation = true;
+        isWalking = true;
+        agente.SetDestination(destino.position);
+        currentState = NPCState.Walking;
 
-            animNPC.SetBool("IsWalking", true);
+        animNPC.SetBool("IsWalking", true);
     }
 
     private void LlegarAlDestino()
@@ -105,8 +105,8 @@ public class NPC : MonoBehaviour
         StartWalking = false;
         if (TerminePreguntas == false)
         {
-           MirarAlJugador();
-           SentarNPC(); 
+            MirarAlJugador();
+            SentarNPC();
         }
     }
 
@@ -194,31 +194,39 @@ public class NPC : MonoBehaviour
             if (pregunta == 1)
             {
                 currentState = NPCState.Talking;
-                StartCoroutine(EsperarYHablar(miCV.C_RespuestaPregunta1));
+                StartCoroutine(EsperarYHablar(miCV.C_AudioRespuestaPregunta1));
             }
             if (pregunta == 2)
             {
                 currentState = NPCState.Talking;
-                StartCoroutine(EsperarYHablar(miCV.C_RespuestaPregunta2));
+                StartCoroutine(EsperarYHablar(miCV.C_AudioRespuestaPregunta2));
             }
             if (pregunta == 3)
             {
                 currentState = NPCState.Talking;
                 TerminePreguntas = true;
+                TogglePreguntas();
             }
         }
     }
 
-    IEnumerator EsperarYHablar(String respuesta)
+    IEnumerator EsperarYHablar(AudioClip respuesta)
     {
         TogglePreguntas();
         animNPC.SetTrigger("Talk");
-        Debug.Log("Diálogo:" + respuesta);
-        yield return new WaitForSeconds(0.5f);
+        //Debug.Log("Diálogo:" + respuesta);
+        AudioSource audioSource = GetComponent<AudioSource>();
+        if (respuesta != null && audioSource != null)
+        {
+            audioSource.clip = respuesta;
+            audioSource.Play();
+            yield return new WaitForSeconds(respuesta.length);
+        }
+        else
+        {
+            Debug.LogWarning("No hay clip de audio o AudioSource asignado.");
+        }
+
         currentState = NPCState.ReadyForQuestions;
     }
-
-
-
-    
 }

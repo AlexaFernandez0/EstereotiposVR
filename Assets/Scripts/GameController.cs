@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Microsoft.Unity.VisualStudio.Editor;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -26,6 +27,11 @@ public class GameController : MonoBehaviour
     private List<CaseData> casosRestantes;
     private int casosCompletados = 0;
     public ResultadosManager resultadosManager;
+    [SerializeField] public GameObject[] Instrucciones;
+    int instruccionActual = -1;
+
+    [SerializeField] public GameObject PanelAjustes;
+    private bool isPaused = false;
 
     public enum GameState
     {
@@ -52,6 +58,7 @@ public class GameController : MonoBehaviour
         }
 
         npcController = GetComponent<NPC_Controller>();
+        PanelAjustes = GameObject.Find("PanelAjustes");
     }
 
     void Start()
@@ -73,25 +80,57 @@ public class GameController : MonoBehaviour
         switch (currentState)
         {
             case GameState.Instrucciones:
-                MostrarInstrucciones();
+                StartCoroutine(EsperarTiempoPrimerasInstrucciones(0));
                 currentState = GameState.EsperandoSombrero;
                 break;
             case GameState.EsperandoSombrero:
+                MostrarInstrucciones(1);
                 if (playerHasHat) IrAFaseTelefono();
                 break;
             case GameState.Telefono:
+                StartCoroutine(EsperarTiempoPrimerasInstrucciones(2));
+                MostrarInstrucciones(3);
                 if (playerHasPhone) IrAFaseSentarse();
                 break;
             case GameState.EsperandoSentarse:
+                MostrarInstrucciones(4);
                 if (playerIsSitting) IniciarRondaNPC();
                 break;
             case GameState.Preguntas:
+                MostrarInstrucciones(5);
                 if (npcController.GetComponent<NPC_Controller>().currentNPC.GetComponent<NPC>().TerminePreguntas) IrAEvaluarCV();
                 break;
             case GameState.EvaluacionCV:
+                StartCoroutine(EsperarInstruccionesEvaluacionCV());
                 if (TermineDeEvaluar) ContinuarRondas();
                 break;
         }
+
+          if (Input.GetKeyDown(KeyCode.X))
+        {
+            TogglePauseMenu();
+        }
+    }
+
+    private void TogglePauseMenu()
+    {
+        isPaused = !isPaused;
+        PanelAjustes.SetActive(isPaused);
+
+        if (isPaused)
+        {
+            Time.timeScale = 0f; // Pausa el tiempo
+        }
+        else
+        {
+            Time.timeScale = 1f; // Reanuda el tiempo
+        }
+    }
+    public void ReanudarJuego()
+    {
+        isPaused = false;
+        PanelAjustes.SetActive(false);
+        Time.timeScale = 1f;
     }
 
     public void GuardarResultado(int id, string nombreCaso, int confianza)
@@ -104,20 +143,25 @@ public class GameController : MonoBehaviour
         resultadosManager.ExportarResultadosAJson();
     }
 
-    void LateUpdate()
+    public void MostrarInstrucciones(int index)
     {
-
+        for (int i = 0; i < Instrucciones.Length; i++)
+        {
+            Instrucciones[i].gameObject.SetActive(i == index);
+        }
     }
-
-    public void MostrarInstrucciones()
+    void OcultarInstruccionActual()
     {
-        // Aquí puedes implementar la lógica para mostrar las instrucciones al jugador
-        Debug.Log("Mostrando instrucciones al jugador.");
-        // Por ejemplo, activar un panel de UI con las instrucciones
+        if (instruccionActual >= 0 && instruccionActual < Instrucciones.Length)
+        {
+            Instrucciones[instruccionActual].gameObject.SetActive(false);
+            instruccionActual = -1;
+        }
     }
 
     public void IrAFaseTelefono()
     {
+        OcultarInstruccionActual();
         audioSourcePhone.Play();
         Debug.Log("Cambiando a la fase de teléfono.");
         currentState = GameState.Telefono;
@@ -125,6 +169,7 @@ public class GameController : MonoBehaviour
 
     public void IrAFaseSentarse()
     {
+        OcultarInstruccionActual();
         Debug.Log("Cambiando a la fase de sentarse.");
         currentState = GameState.EsperandoSentarse;
 
@@ -132,6 +177,7 @@ public class GameController : MonoBehaviour
 
     public void IniciarRondaNPC()
     {
+        OcultarInstruccionActual();
         Debug.Log("Iniciando ronda con NPC.");
         SiguienteCaso();
         npcController.IniciarMovimientoNPC();
@@ -140,6 +186,7 @@ public class GameController : MonoBehaviour
 
     public void IrAEvaluarCV()
     {
+        OcultarInstruccionActual();
         Debug.Log("Cambiando a la fase de evaluación de CV.");
         currentState = GameState.EvaluacionCV;
     }
@@ -163,7 +210,7 @@ public class GameController : MonoBehaviour
         }
     }
 
-    void FinalizarEvaluacion()
+    public void FinalizarEvaluacion()
     {
         Debug.Log("Finalizando evaluación.");
         // Aquí puedes implementar la lógica para finalizar la evaluación, como mostrar resultados finales
@@ -185,11 +232,13 @@ public class GameController : MonoBehaviour
 
     public void YaTengoSombrero()
     {
+        OcultarInstruccionActual();
         playerHasHat = true;
         Debug.Log("El jugador tiene el sombrero: " + playerHasHat);
     }
     public void YaTengoTelefono()
     {
+        OcultarInstruccionActual();
         StartCoroutine(ObtencionTelefono());
         Debug.Log("El jugador tiene el telefono: " + playerHasPhone);
     }
@@ -208,6 +257,29 @@ public class GameController : MonoBehaviour
         playerIsSitting = true;
         Debug.Log("El jugador se ha sentado: " + playerIsSitting);
     }
+
+    IEnumerator EsperarTiempoPrimerasInstrucciones(int index)
+    {
+        MostrarInstrucciones(index);
+        yield return new WaitForSeconds(5f);
+        OcultarInstruccionActual();
+    }
+    
+    IEnumerator EsperarInstruccionesEvaluacionCV()
+    {
+        MostrarInstrucciones(6);
+        yield return new WaitForSeconds(5f);
+        OcultarInstruccionActual();
+
+        MostrarInstrucciones(7);
+        yield return new WaitForSeconds(5f);
+        OcultarInstruccionActual();
+
+        MostrarInstrucciones(8);
+        yield return new WaitForSeconds(5f);
+        OcultarInstruccionActual();
+    }
+    
 
 }
 

@@ -22,4 +22,6 @@ MonoBehaviour:
   c_TipoProfesion: Cuidado
   c_RespuestaPregunta1: Respuesta 1
   c_RespuestaPregunta2: Respuesta 2
+  c_AudioRespuestaPregunta1: {fileID: 8300000, guid: 1d00b8c938d962f42ad46af5e59867ea, type: 3}
+  c_AudioRespuestaPregunta2: {fileID: 8300000, guid: 1d00b8c938d962f42ad46af5e59867ea, type: 3}
   c_Confianza: 0
